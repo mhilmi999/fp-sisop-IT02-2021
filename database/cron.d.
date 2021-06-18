@@ -1,1 +1,1 @@
-settingan backup cron disini
+* * * * * echo 'kali' | sudo -S /home/kali/fp-sisop-IT02-2021/client/dump '*' && zip /home/kali/fp-sisop-IT02-2021/database/databases/`date +"%s"`.zip /home/kali/fp-sisop-IT02-2021/database/databases/*.backup /home/kali/fp-sisop-IT02-2021/database/databases/db.log && rm /home/kali/fp-sisop-IT02-2021/database/databases/*.backup && echo '' > /home/kali/fp-sisop-IT02-2021/database/databases/db.log
