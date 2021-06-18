@@ -68,14 +68,14 @@ int main(int argc, char const *argv[]) {
     }
 
 
-    // code here
+    
     memset(buffer, 0, sizeof(buffer));
     bzero(buffer, sizeof(buffer));
     send(sock, username, strlen(username), 0);
     sleep(1);
     send(sock, password, strlen(password), 0);
 
-    // success or fail
+    
     read(sock, buffer, 1024);
     if (strcmp(buffer, "login success") != 0) {
         close(sock);
