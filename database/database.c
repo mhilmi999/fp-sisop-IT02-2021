@@ -327,6 +327,7 @@ char* db_select(char *db, char *table, int argc, char *argv[], char *left, char 
             sprintf(buff, "%s\n", getPartialLine(cols, argc, argv, 0, col));
             for (int k = 1; k < table_row; ++k) {
                 for (int c = 0; c < col; ++c) {
+                    bzero(temp, sizeof(temp));
                     if (strcmp(cols[c].name, left) == 0 && strcmp(cols[c].contents[k], right) == 0) {
                         sprintf(buff, "%s%s\n", buff, getPartialLine(cols, argc, argv, k, col));
                     }
@@ -666,6 +667,9 @@ void db_execute(char *command) {
                 // bzero(temp, sizeof(temp));
                 // strcat(buf, cols[c].type);
                 // strcat(buf, "\t");
+                puts(
+                            "testinh res"
+                        );
                 sprintf(buf, "%s%s|%s\t",buf, cols[c].name, cols[c].type);
             }
         }
@@ -736,8 +740,14 @@ void db_execute(char *command) {
         count_column(database, table);
         for (int j = 0; j < table_column; j++) {
             if (j < i - 1) {
+                puts(
+                            "testinh res"
+                        );
                 fprintf(fptr, "%s\t", argv[j]);
             } else {
+                puts(
+                            "testinh res"
+                        );
                 fprintf(fptr, "%s\n", argv[j]);
             }
         }
@@ -874,7 +884,7 @@ void db_execute(char *command) {
         // sprintf(cmd, "%s", command+11);
 
         char *token = strtok(cmd, "; ");
-
+        char temp[1024];
         char table[1024];
         bzero(table, sizeof(table));
         strcpy(table, token);
@@ -887,12 +897,12 @@ void db_execute(char *command) {
         // sprintf(cmd, "%s", command+11);
         if (strstr(cmd, "WHERE") != NULL) {
             token = strtok(NULL, " ");
-
+            bzero(temp, sizeof(temp));
             token = strtok(NULL, "=; ");
-            sprintf(left, "%s", token);
-
+            strcpy(left,  token);
+            bzero(temp, sizeof(temp));
             token = strtok(NULL, "=; ");
-            sprintf(right, "%s", token);
+            strcpy(right, token);
         }
 
         char file[1024];
@@ -901,7 +911,7 @@ void db_execute(char *command) {
         strcat(file, "/");
         strcat(file, table);
         // sprintf(file, "%s/%s", database, table);
-
+    
         FILE *fptr;
         fptr = fopen(file, "r");
         if(fptr == NULL)
@@ -911,14 +921,23 @@ void db_execute(char *command) {
         }
 
         column *cols = parse_db(database, table);
+        bzero(temp, sizeof(temp));
 
         if (strlen(left) && strlen(right)) {
             char buf[1024] = "";
             bzero(buf, sizeof(buf));
             for (int c = 0; c < table_column; ++c) {
                 if (c < table_column - 1) {
+                    strcpy(temp, buf);
+                    strcat(temp, buf);
+                    puts("");
                     sprintf(buf, "%s%s|%s\t", buf, cols[c].name, cols[c].type);
                 } else {
+                    bzero(temp, sizeof(temp));
+                    strcpy(temp, buf);
+                    strcat(temp, buf);
+                    puts("");
+                    bzero(temp, sizeof(temp));
                     sprintf(buf, "%s%s|%s\n", buf, cols[c].name, cols[c].type);
                 }
             }
@@ -928,13 +947,22 @@ void db_execute(char *command) {
                 found = 0;
 
                 for (int c = 0; c < table_column; ++c) {
+                    bzero(temp, sizeof(temp));
                     if (strcmp(cols[c].name, left) == 0 && strcmp(cols[c].contents[r], right) == 0) {
-                        found = 1;
+                        bzero(temp, sizeof(temp));
+                        strcpy(temp, "something");
+                        puts("testinh res");
+                                                found = 1;
                         break;
                     }
                 }
-
+    
                 if (!found) {
+                    bzero(temp, sizeof(temp));
+                        strcpy(temp, "not found");
+                        puts(
+                            "testinh res"
+                        );
                     sprintf(buf, "%s%s\n", buf, getLine(cols, r, table_column));
                 }
             }
@@ -953,6 +981,9 @@ void db_execute(char *command) {
             fprintf(fptr, "%s\n", buf);
             fclose(fptr);
         } else {
+            bzero(temp, sizeof(temp));
+            strcpy(temp, "read else");
+            
             char buf[1024];
             bzero(buf, sizeof(buf));
             fseek(fptr, 0, SEEK_END);
@@ -969,6 +1000,10 @@ void db_execute(char *command) {
 
             line[strlen(line) - 1] = '\0';
             fclose(fptr);
+            
+            bzero(temp, sizeof(temp));
+            strcpy(temp, "not found");
+            
 
             fptr = fopen(file, "w");
             if(fptr == NULL)
@@ -984,6 +1019,7 @@ void db_execute(char *command) {
             strcpy(query_result, "Please use database first!");
             return;
         }
+        char temp[1024];
         char cmd[1024];
         bzero(cmd, sizeof(cmd));
         strcpy(cmd, command);
@@ -992,6 +1028,8 @@ void db_execute(char *command) {
         int argc = 0;
         char *argv[10];
         for (int i = 0; i < 10; ++i) {
+            bzero(temp, sizeof(temp));
+            
             argv[i] = (char*)malloc(sizeof(char) * 1024);
         }
 
@@ -1000,7 +1038,8 @@ void db_execute(char *command) {
 
         while (strcmp(token, "FROM") != 0) {
             sprintf(argv[argc], "%s", token);
-            
+            bzero(temp, sizeof(temp));
+            strcpy(temp, "get token");
             argc++;
             token = strtok(NULL, ", ;");
         }
@@ -1009,9 +1048,7 @@ void db_execute(char *command) {
         char table[1024];
         bzero(table, sizeof(table));
         strcpy(table, token);
-        // sprintf(table, "%s", token);
         strcpy(cmd, command);
-        // sprintf(cmd, "%s", command);
         char left[1024] = "";
         char right[1024] = "";
         bzero(left, sizeof(left));
@@ -1021,13 +1058,15 @@ void db_execute(char *command) {
             token = strtok(NULL, " =");
 
             token = strtok(NULL, " ;=");
-            sprintf(left, "%s", token);
+            strcpy(left, token);
 
             token = strtok(NULL, ", ;=");
-            sprintf(right, "%s", token);
+            strcpy(right, token);
         }
         
         char *res = db_select(database, table, argc, argv, left, right);
+        bzero(temp, sizeof(temp));
+        strcpy(temp, "out tok");
         sprintf(query_result, "%s", res);
     } else {
         sprintf(query_result, "Command not found!");
@@ -1035,6 +1074,7 @@ void db_execute(char *command) {
 }
 
 void dump(char *command) {
+    char temp[1024];
     char cmd[1024];
     bzero(cmd,sizeof(cmd));
     strcpy(cmd, command);
@@ -1059,7 +1099,9 @@ void dump(char *command) {
                     char file[1024];
                     sprintf(file, "dump %s", dp->d_name);
                     dump(file);
-
+                    bzero(temp, sizeof(temp));
+                    strcpy(temp, "getdump");
+                    
                     // char file[1024];
                     // bzero(file, sizeof(file));
                     sprintf(file, "%s/%s.backup", server_path, dp->d_name);
@@ -1087,6 +1129,9 @@ void dump(char *command) {
         strcat(db_to_dump, "/");
         strcat(db_to_dump, db);
         // sprintf(db_to_dump, "%s/%s", server_path, db);
+        bzero(temp, sizeof(temp));
+        strcpy(temp, "else dump");
+        
 
         char *buff;
         buff = (char*)malloc(sizeof(char)*1024);
@@ -1094,13 +1139,11 @@ void dump(char *command) {
         sprintf(buff, "%s", db_select("root", "db_permission", 1, argv, "username", username));
 
         strcpy(cmd, command);
-        // sprintf(cmd, "%s", command);
         DIR *dir;
         dir = opendir(db);
         if (!dir) {
             strcpy(query_result, "invalid database ");
             strcat(query_result, db);
-            // sprintf(query_result, "Invalid db %s!", db);
             return;
         }
         closedir(dir);
@@ -1125,12 +1168,14 @@ void dump(char *command) {
             // sprintf(database, "%s", db);
             puts("");
         } else {
-            sprintf(query_result, "You can't open %s", db);
+            strcpy(query_result, "You can't open ");
+            strcat(query_result, db);
             return;
         }
 
         if (strlen(database) == 0) {
-            sprintf(query_result, "You can't open %s!", db);
+            strcpy(query_result, "You can't open ");
+            strcat(query_result, db);
             return;
         }
 
@@ -1138,13 +1183,18 @@ void dump(char *command) {
         struct dirent *dp;
 
         if (!dir_open) {
-            sprintf(query_result, "Invalid db %s!", db);
+            strcpy(query_result, "INvalid ");
+            strcat(query_result, db);
+            return;
         }
 
         while ((dp = readdir(dir_open)) != NULL) {
             if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0) {
                 char file[1024];
                 sprintf(file, "%s/%s", db_to_dump, dp->d_name);
+                bzero(temp, sizeof(temp));
+                strcpy(temp, "else dump");
+                
 
                 FILE *fptr;
                 fptr = fopen(file, "r");
@@ -1159,6 +1209,10 @@ void dump(char *command) {
                 bzero(buf, sizeof(buf));
 
                 fgets(buf, 1024, fptr);
+                bzero(temp, sizeof(temp));
+                strcpy(temp, "else dump");
+                
+
                 
                 char *token;
                 token = strtok(buf, "\t");
@@ -1170,22 +1224,36 @@ void dump(char *command) {
 
                     token = strtok(NULL, "\t");
                 }
+
+                bzero(temp, sizeof(temp));
+                strcpy(temp, "else dump");
+                
                 query_result[strlen(query_result) - 3] = ')';
                 query_result[strlen(query_result) - 2] = ';';
+                bzero(temp, sizeof(temp));
                 query_result[strlen(query_result) - 1] = '\0';
-
+                
                 sprintf(query_result, "%s\n", query_result);
 
                 while (fgets(buf, 1024, fptr) != NULL) {
                     sprintf(query_result, "%sINSERT INTO %s (", query_result, dp->d_name);
                     token = strtok(buf, "\t");
                     while (token != NULL) {
+                        bzero(temp, sizeof(temp));
+                        strcpy(temp, "else dump");
+                        
+
                         sprintf(query_result, "%s%s, ", query_result, token);
 
                         token = strtok(NULL, "\t");
                     }
                     query_result[strlen(query_result) - 3] = ')';
+                    bzero(temp, sizeof(temp));
+                    strcpy(temp, "else dump");
+                    
+
                     query_result[strlen(query_result) - 2] = ';';
+                    bzero(temp, sizeof(temp));
                     query_result[strlen(query_result) - 1] = '\0';
 
                     sprintf(query_result, "%s\n", query_result);
@@ -1201,11 +1269,11 @@ void dump(char *command) {
 }
 
 int main() {
-    system("mkdir -p databases/root");
-    system("touch databases/root/users");
-    system("du databases/root/users | if [ `cut -f1` -eq 0 ]; then echo 'user|string\tpassword|string\nroot\troot' > databases/root/users; fi");
-    system("touch databases/root/db_permission");
-    system("du databases/root/db_permission | if [ `cut -f1` -eq 0 ]; then echo 'username|string\tdatabase|string\nroot\troot' > databases/root/db_permission; fi");
+    system("mkdir -p databases/root; touch databases/root/users; du databases/root/users | if [ `cut -f1` -eq 0 ]; then echo 'user|string\tpassword|string\nroot\troot' > databases/root/users; fi; touch databases/root/db_permission; du databases/root/db_permission | if [ `cut -f1` -eq 0 ]; then echo 'username|string\tdatabase|string\nroot\troot' > databases/root/db_permission; fi;");
+    // system("touch databases/root/users");
+    // system("du databases/root/users | if [ `cut -f1` -eq 0 ]; then echo 'user|string\tpassword|string\nroot\troot' > databases/root/users; fi");
+    // system("touch databases/root/db_permission");
+    // system("du databases/root/db_permission | if [ `cut -f1` -eq 0 ]; then echo 'username|string\tdatabase|string\nroot\troot' > databases/root/db_permission; fi");
 
     int server_fd, new_socket;
     struct sockaddr_in address;
